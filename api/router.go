@@ -13,14 +13,19 @@ var (
 	// handlers for the get method
 	GET map[string]requestHandler
 	// handlers for the post method
-	POST map[string]requestHandler
+	POST map[string]uploadHandler
 )
+
+func init() {
+	GET = make(map[string]requestHandler)
+	POST = make(map[string]uploadHandler)
+}
 
 // Router takes http requests and manages their response writers
 func Router(w http.ResponseWriter, r *http.Request) {
 	var err error
 	var u *url.URL
-	var req Request{}
+	var req Request
 	u, err = url.Parse(r.URL)
 	if err != nil {
 		io.WriteString(w, "error ya dingus\n")
@@ -33,12 +38,11 @@ func Router(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	switch (r.Method)
-	{
+	switch (r.Method); {
 	case "GET":
-		GET[req.Codec](w,req)
+		GET[req.Codec](w, req)
 	case "POST":
-		POST[req.Codec](w,req,r)
+		POST[req.Codec](w, req, r)
 	}
 
 }
