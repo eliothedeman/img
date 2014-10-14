@@ -6,14 +6,14 @@ import (
 	"net/url"
 )
 
-type requestHandler func(w http.ResponseWriter, r Request)
-type uploadHandler func(w http.ResponseWriter, r Request, hr *http.Request)
+type RequestHandler func(w http.ResponseWriter, r Request)
+type UploadHandler func(w http.ResponseWriter, r Request, hr *http.Request)
 
 var (
 	// handlers for the get method
-	GET map[string]requestHandler
+	GET map[string]RequestHandler
 	// handlers for the post method
-	POST map[string]uploadHandler
+	POST map[string]UploadHandler
 )
 
 func init() {
