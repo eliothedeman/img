@@ -2,6 +2,7 @@ package api
 
 import (
 	"io"
+	"log"
 	"net/http"
 	"net/url"
 )
@@ -17,12 +18,19 @@ var (
 )
 
 func init() {
-	GET = make(map[string]RequestHandler)
-	POST = make(map[string]UploadHandler)
+	// handlers for the get method
+	GET = map[string]RequestHandler{
+		"jpg": DebugRequest,
+	}
+	// handlers for the post method
+	POST = map[string]UploadHandler{
+		"jpg": DebugUpload,
+	}
 }
 
 // Router takes http requests and manages their response writers
 func Router(w http.ResponseWriter, r *http.Request) {
+	log.Println(r.URL.String())
 	var err error
 	var u *url.URL
 	var req Request

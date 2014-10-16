@@ -1,6 +1,9 @@
 package api
 
-import "net/http"
+import (
+	"log"
+	"net/http"
+)
 
 // Server serves api requests via http
 type Server struct {
@@ -9,5 +12,6 @@ type Server struct {
 // Server serve the api
 func (s *Server) Serve(port string) {
 	http.HandleFunc("/", Router)
-	http.ListenAndServe(":"+port, nil)
+	err := http.ListenAndServe(":"+port, nil)
+	log.Println(err)
 }
