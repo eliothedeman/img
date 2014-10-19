@@ -1,7 +1,6 @@
 package api
 
 import (
-	"errors"
 	"net/url"
 	"strings"
 )
@@ -10,7 +9,7 @@ import (
 type Request struct {
 	Codec       string
 	Compression string
-	Id          string
+	ID          string
 	Size        string
 }
 
@@ -19,13 +18,8 @@ func ParseRequest(u *url.URL) (Request, error) {
 	r := Request{}
 	v := u.Query()
 
-	s := strings.Split(u.RequestURI(), "/")
+	r.ID = u.Path[0:len(u.Path)]
 
-	if len(s) < 1 {
-		return Request{}, errors.New("Image id must be given")
-	} else {
-		r.Id = s[0]
-	}
 	// default to jpeg if not found
 	if v.Get("codec") != "" {
 		r.Codec = strings.ToLower(v.Get("codec"))

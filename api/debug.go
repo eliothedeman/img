@@ -3,12 +3,16 @@ package api
 import (
 	"log"
 	"net/http"
+
+	"github.com/eliothedeman/img/provider"
 )
 
+// DebugRequest debug RequestHandler
 func DebugRequest(w http.ResponseWriter, r Request) {
 	log.Println(r.Codec)
 }
 
-func DebugUpload(w http.ResponseWriter, r Request, hr *http.Request) {
-	log.Println(r.Id)
+// DebugUpload debug UploadHandler
+func DebugUpload(w http.ResponseWriter, r Request, hr *http.Request, proto provider.Provider) {
+	log.Println(r.ID)
 }

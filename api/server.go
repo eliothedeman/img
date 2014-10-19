@@ -9,7 +9,7 @@ import (
 type Server struct {
 }
 
-// Server serve the api
+// Serve serve the api
 func (s *Server) Serve(port string) {
 	http.HandleFunc("/", Router)
 	err := http.ListenAndServe(":"+port, nil)
