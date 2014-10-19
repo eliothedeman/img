@@ -21,6 +21,7 @@ var (
 	POST map[string]UploadHandler
 )
 
+// init set up the handlers
 func init() {
 	// handlers for the get method
 	GET = map[string]RequestHandler{
