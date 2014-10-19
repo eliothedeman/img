@@ -84,6 +84,7 @@ func (f *File) Create(id, codec, size, prefix string) {
 	f.Format = codec
 }
 
+// create creates a new file on disk
 func (f *File) create() error {
 	var err error
 	// check if there if the path exists, if not create it
