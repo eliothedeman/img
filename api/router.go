@@ -9,7 +9,7 @@ import (
 )
 
 // RequestHandler handles an api request and responds to the requester
-type RequestHandler func(w http.ResponseWriter, r Request)
+type RequestHandler func(w http.ResponseWriter, r Request, proto provider.Provider)
 
 // UploadHandler handles an upload and responds to the user
 type UploadHandler func(w http.ResponseWriter, r Request, hr *http.Request, proto provider.Provider)
@@ -26,6 +26,7 @@ func init() {
 	// handlers for the get method
 	GET = map[string]RequestHandler{
 		"debug": DebugRequest,
+		"jpg":   Download,
 	}
 	// handlers for the post method
 	POST = map[string]UploadHandler{
@@ -54,7 +55,7 @@ func Router(w http.ResponseWriter, r *http.Request) {
 	f.Create(req.ID, req.Codec, req.Size, "data/")
 	switch r.Method {
 	case "GET":
-		GET[req.Codec](w, req)
+		GET[req.Codec](w, req, f)
 	case "POST":
 		POST[req.Codec](w, req, r, f)
 	}

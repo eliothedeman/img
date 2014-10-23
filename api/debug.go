@@ -8,7 +8,7 @@ import (
 )
 
 // DebugRequest debug RequestHandler
-func DebugRequest(w http.ResponseWriter, r Request) {
+func DebugRequest(w http.ResponseWriter, r Request, proto provider.Provider) {
 	log.Println(r.Codec)
 }
 

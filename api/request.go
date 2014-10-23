@@ -18,7 +18,7 @@ func ParseRequest(u *url.URL) (Request, error) {
 	r := Request{}
 	v := u.Query()
 
-	r.ID = u.Path[0:len(u.Path)]
+	r.ID = u.Path[1:len(u.Path)]
 
 	// default to jpeg if not found
 	if v.Get("codec") != "" {

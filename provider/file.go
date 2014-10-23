@@ -1,6 +1,8 @@
 package provider
 
 import (
+	"fmt"
+	"io"
 	"log"
 	"os"
 
@@ -23,21 +25,21 @@ func (f *File) Read(p []byte) (int, error) {
 			return 0, err
 		}
 	}
-	n, err := f.Read(p)
+	n, err := f.file.Read(p)
 	return n, err
 
 }
 
-// Write write to the file
+// Write writes to the file
 func (f *File) Write(p []byte) (int, error) {
 	if f.file == nil {
-		err := f.open()
+		err := f.create()
 		if err != nil {
 			return 0, err
 		}
 	}
 	n, err := f.file.Write(p)
-	log.Println(err)
+	fmt.Printf("Wrote %d bytes to %s", n, f.file.Name())
 	return n, err
 
 }
@@ -56,7 +58,7 @@ func (f *File) open() error {
 	if f.file == nil {
 		// check if the file exists
 		// if it is not on disk, create a new one
-		if _, err = os.Stat(f.Location()); os.IsNotExist(err) {
+		if _, err = os.Stat(f.Location()); err != nil {
 			err = f.create()
 			if err != nil {
 				log.Println(err.Error())
@@ -68,6 +70,7 @@ func (f *File) open() error {
 			if err != nil {
 				return err
 			}
+			log.Println("Opened file '" + f.Location() + "'")
 		}
 	}
 	return nil
@@ -88,7 +91,7 @@ func (f *File) Create(id, codec, size, prefix string) {
 func (f *File) create() error {
 	var err error
 	// check if there if the path exists, if not create it
-	if _, err = os.Stat(f.Path); os.IsNotExist(err) {
+	if _, err = os.Stat(f.Path); err != nil {
 		err := os.MkdirAll(f.Path, os.FileMode(0777))
 		if err != nil {
 			return err
@@ -96,16 +99,38 @@ func (f *File) create() error {
 		log.Println("Created directory '" + f.Path + "'")
 	}
 
-	// if the file already exists, don't try to create it again
-	if _, err = os.Stat(f.Path); !os.IsNotExist(err) {
-		log.Println("File '" + f.Location() + "' already exists")
-		return nil
+	// if the file already exists, remove it and create it again
+	if _, err = os.Stat(f.Location()); err == nil {
+		log.Println("File '" + f.Location() + "' already exists. Replacing with new file.")
+		err = os.Remove(f.Location())
+		if err != nil {
+			return err
+		}
 	}
 	f.file, err = os.Create(f.Location())
-	log.Println("created " + f.Location())
 	if err != nil {
 		return err
 	}
 	log.Println("Created file '" + f.Location() + "'")
 	return nil
+}
+func (f *File) ReadAt(b []byte, off int64) (int, error) {
+	var n int
+	var err error
+	if f.file == nil {
+		err = f.open()
+		if err != nil {
+			return 0, err
+		}
+	}
+	n, err = f.file.ReadAt(b, off)
+	if err != nil {
+		// don't return an error on EOF
+		if err == io.EOF {
+			return n, nil
+		}
+		return n, err
+	}
+	fmt.Printf("Read %d bytes from %s\n", n, f.file.Name())
+	return n, nil
 }
