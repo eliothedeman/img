@@ -2,6 +2,7 @@ package api
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 
@@ -24,15 +25,15 @@ func Download(w http.ResponseWriter, r Request, proto provider.Provider) {
 		// read bytes from buffer
 		n, err = proto.ReadAt(b, int64(off))
 		if err != nil {
-			log.Println(err.Error())
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			if err != io.EOF {
+				log.Println(err.Error())
+			}
 		}
 		off += n
 		// write bytes to requester
-		_, err = w.Write(b)
+		_, err = w.Write(b[0:n])
 		if err != nil {
 			log.Println(err.Error())
-			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 		fmt.Printf("Wrote %d bytes to client\n", n)
 	}

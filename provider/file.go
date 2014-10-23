@@ -2,7 +2,6 @@ package provider
 
 import (
 	"fmt"
-	"io"
 	"log"
 	"os"
 
@@ -125,10 +124,6 @@ func (f *File) ReadAt(b []byte, off int64) (int, error) {
 	}
 	n, err = f.file.ReadAt(b, off)
 	if err != nil {
-		// don't return an error on EOF
-		if err == io.EOF {
-			return n, nil
-		}
 		return n, err
 	}
 	fmt.Printf("Read %d bytes from %s\n", n, f.file.Name())
