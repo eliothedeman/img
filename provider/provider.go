@@ -6,6 +6,7 @@ import "io"
 type Provider interface {
 	io.ReadWriteCloser
 	io.ReaderAt
+	io.WriterAt
 	Location() string
 	Create(id, codec, size, prefix string)
 }

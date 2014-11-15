@@ -38,9 +38,19 @@ func (f *File) Write(p []byte) (int, error) {
 		}
 	}
 	n, err := f.file.Write(p)
-	fmt.Printf("Wrote %d bytes to %s", n, f.file.Name())
 	return n, err
 
+}
+
+func (f *File) WriteAt(b []byte, off int64) (int, error) {
+	if f.file == nil {
+		err := f.create()
+		if err != nil {
+			return 0, err
+		}
+	}
+	n, err := f.file.WriteAt(b, off)
+	return n, err
 }
 
 // Close close the connection to the file
